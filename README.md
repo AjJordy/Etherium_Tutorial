@@ -18,12 +18,12 @@ https://www.blockchain.com/learning-portal/bitcoin-faq
 
 ## Protocolo 
 
-* Hashes * 
+**Hashes** 
 
 Normalmente, quando um hash é calculado dentro do bitcoin, é calculado duas vezes. Na maioria das vezes , os hashes SHA-256 são usados, no entanto, o RIPEMD-160 também é usado quando um hash menor é desejável (por exemplo, ao criar um endereço de bitcoin).
 
 
-* Merkle Trees *
+**Merkle Trees**
 
 Árvores Merkle são árvores binárias de hashes. As árvores Merkle em bitcoin usam um SHA-256 duplo , o hash SHA-256 do hash SHA-256 de alguma coisa.
 Se, ao formar uma linha na árvore (diferente da raiz da árvore), ela tiver um número ímpar de elementos, o hash duplo final será duplicado para garantir que a linha tenha um número par de hashes.
@@ -33,7 +33,7 @@ Em seguida, a linha acima consiste em metade desse número de hashes. Cada entra
 
 Esse procedimento se repete recursivamente até alcançarmos uma linha que consiste em apenas um único hash duplo. Esta é a raiz Merkle da árvore.
 
-* Assinaturas  *
+**Assinaturas**
 
 O Bitcoin usa o Algoritmo de Assinatura Digital de Curva Elíptica ( ECDSA ) para assinar transações.
 
@@ -43,7 +43,7 @@ Chaves públicas (em scripts) são fornecidas como 04 <x> <y>, onde x e y são i
 
 As assinaturas usam a codificação DER para compactar os componentes r e s em um único fluxo de bytes (isso também é o que o OpenSSL produz por padrão).
 
-* Verificação de transação  *
+**Verificação de transação**
 
 Transações são registros assinados criptograficamente que reatribuem a propriedade de Bitcoins para novos endereços. As transações têm entradas - registros que fazem referência aos fundos de outras transações anteriores - e saídas - registros que determinam o novo dono dos Bitcoins transferidos, e que serão referenciados como entradas em transações futuras conforme esses fundos sejam pagos.
 
@@ -59,7 +59,7 @@ A transação no banco de moedas no bloco zero não pode ser gasta. Isso se deve
 
 A maioria das saídas de Bitcoin sobrecarrega as moedas recém-transferidas com uma única chave privada ECDSA. O registro real salvo com entradas e saídas não é necessariamente uma chave, mas um script . O Bitcoin usa um sistema de script interpretado para determinar se os critérios de saída foram atendidos, com os quais operações mais complexas são possíveis, como saídas que requerem duas assinaturas ECDSA ou esquemas de duas ou três assinaturas. Uma saída que referencia um único endereço Bitcoin é uma saída típica ; uma saída realmente contém essas informações na forma de um script que requer uma única assinatura do ECDSA (consulte OP_CHECKSIG). O script de saída especifica o que deve ser fornecido para desbloquear os fundos mais tarde e, quando chegar a hora de gastar a transação em outra entrada, essa entrada deve fornecer todas as coisas que satisfazem os requisitos definidos pela saída original. roteiro.
 
-* Endereços *
+**Endereços**
 
 Um endereço de bitcoin é, na verdade, o hash de uma chave pública do ECDSA, calculado dessa maneira:
 
