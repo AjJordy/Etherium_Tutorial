@@ -96,7 +96,7 @@ Se tiver algum problema com permissão, usar comando abaixo.
 
 Após isso será necessário instalar o Web3.js para gerenciar o protocolo. Está é a biblioteca padrão do Ethereum.
 
-Mas o que é o Web3.js ?
+**Mas o que é o Web3.js ?**
 
 É uma API Javascript compatível com Ethereum que implementa especificações RPC genéricas no formato JSON. Para a aplicação para trabalhar em ethereum pode usar o objeto Web3 fornecido pela biblioteca web3.js . A biblioteca interna se comunica com um nó local por meio de chamadas RPC. Web3.js funciona com qualquer nó Ethereum que expõe uma camada RPC. O Web3 contém o objeto eth  (web3.eth) para interações específicas do blockchain Ethereum e o objeto shh (web3.shh) para a interação do Whisper.
 
@@ -117,7 +117,7 @@ Com tudo devidamente instalado, usaremos uma IDE  web suportado pela propria Eth
 
 O Remix é uma IDE que suporta o Solidity.
 
-Mas o que é Solidity ?
+**Mas o que é Solidity ?**
 
 Solidity é uma linguagem de programação orientada a contratos para escrever contratos inteligentes. É usado para implementar contratos inteligentes em várias plataformas blockchain .
 
@@ -232,6 +232,21 @@ Ethereum suporta navegadores como Mist ou MetaMask terão um ethereumProvider we
     if (typeof web3 !== 'undefined') {
         web3 = new Web3(web3.currentProvider);
         //var web3 = new Web3(Web3.givenProvider || "ws://localhost:8546");
+
+        // ------------------- Usando um provedor IPC em node.js ---------------------------
+        // var net = require('net');
+        // var web3 = new Web3('/Users/myuser/Library/Ethereum/geth.ipc', net); // mac os path
+        // ou
+        // var web3 = new Web3(new Web3.providers.IpcProvider('/Users/myuser/Library/Ethereum/geth.ipc', net)); // mac os path
+        // no windows o caminho é: "\\\\.\\pipe\\geth.ipc"
+        // no linux o caminho é : "/users/myuser/.ethereum/geth.ipc"
+
+        // --------------- Usar para um provedor fornecido, exemplo no Mist, ou instanciando um novo provedor websocket ----------------
+        // var Web3 = require('web3');
+        // var web3 = new Web3(Web3.givenProvider || 'ws://remotenode.com:8546');
+        // ou
+        // var web3 = new Web3(Web3.givenProvider || new Web3.providers.WebsocketProvider('ws://remotenode.com:8546'));
+
     } else {
         // Definimos o provedor que queremos, no caso o Web3.providers, cuja porta padrão é 8545
         // Usamos o localhost, mas se quiser se conectar remoto use o ip do destino
@@ -248,7 +263,7 @@ Agora voltando para o Remix, na aba *Compile* clique em *Details* e desça até 
 solc filename.sol --abi
 ```
 
-Mas o que é ABI ?
+**Mas o que é ABI ?**
 
 ABI significa interface binária de aplicativo. Em geral, um ABI é a interface entre dois módulos de programa, um dos quais é frequentemente no nível de código de máquina. A interface é o método de fato para codificar / decodificar dados dentro / fora do código da máquina. No Ethereum, é basicamente como você pode codificar chamadas de contratos de Solidity para o EVM e, de trás para frente, como ler os dados de transações.
 
@@ -261,7 +276,7 @@ ABI significa interface binária de aplicativo. Em geral, um ABI é a interface 
 	var reserva = web3.eth.contract("COLE O ABI AQUI");
  </script>
 ```
-Agora vamos inserir o endereço do blockchain. Em *Deploy contracts* clique no ícone de copy e insera no código como demonstrádo no código abaixo.
+Agora vamos inserir o endereço do blockchain. Em *Deploy contracts* clique no ícone de copy e insera no código como demonstrádo no código abaixo. Este é o endereço no formato de Hash que identifica o bloco que será realizado a operação, em que iremos armazenar os dados.
 
 ![figure3](/figure3.png)
 
@@ -309,6 +324,19 @@ Se olharmos no log do terminal que estava rodando o testrpc podemos ver que a tr
 ![terminal](/terminal.png)
 
 
+**Quanto custa a manutenção da blockchain?**
+
+Cada operação de baixo nível disponível no EVM (Ethereum Virtual Machine) é chamada de OPCODE. Estes incluem operações como ADD - adicionando dois inteiros juntos, BALANCE - obtendo o saldo de uma conta, e CREATE - criando um novo contrato com o código fornecido. Cada um desses OPCODEs possui um número chamado “gás” associado a ele. O gás é um número abstrato que representa a complexidade relativa das operações. Por exemplo, ADD usa 3 gases enquanto MUL (multiplica dois inteiros) usa 5 gases, então MUL é mais complexo que ADD.
+
+É importante notar que todas as transações custam 21.000 de gás como base. Então, se você está apenas transferindo fundos e não interagindo com um contrato, sua transação leva 21.000 euros. Se você estiver interagindo com um contrato, sua transação consumirá 21.000 de gás mais qualquer gás associado à execução do contrato.
+
+Enquanto o gás é fixo por operação, a quantia que um usuário paga por preço de gás -  gás  é dinâmica e ditada pelas condições do mercado. O preço do gás é um valor que representa quanto o usuário está disposto a pagar por gás. Quando um usuário envia uma transação, eles especificam o preço do gás em Gwei / Gas (1 Gwei é igual a 0,000000001 ETH), e a taxa total que eles pagam é igual a gas_price * gas_used. Os mineiros recebem essa taxa e priorizam transações com um preço mais alto. Quanto maior o preço do gás que você estiver disposto a pagar, mais rápido sua transação será processada.
+
+O Posto de Gasolina ETH é um excelente recurso para compreender as condições atuais do mercado de gás. "Preços de gás de usuário recomendados" mostra o intervalo de preços de gás que você pode pagar e os tempos de transação esperados.
+
+As operações no Ethereum custam preço do gas * gas usado, mas o que isso traduz em tanto éter quanto em dólares? O atual preço mediano do gás (28 Gwei) e taxa de câmbio atual do USD / ETH (US $ 295 / ETH).
+
+
 **Referencias:**
 
 https://en.blockchain.it/wiki/Protocol_documentation
@@ -338,3 +366,7 @@ https://ethereum.stackexchange.com/questions/234/what-is-an-abi-and-why-is-it-ne
 https://ethereum.stackexchange.com/questions/10868/contract-call-web3-error-could-not-unlock-signer-account
 
 https://davekiss.com/ethereum-web3-node-tutorial/
+
+https://web3js.readthedocs.io/en/1.0/web3.html
+
+https://hackernoon.com/ether-purchase-power-df40a38c5a2f
