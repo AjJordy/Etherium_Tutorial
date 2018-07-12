@@ -16,13 +16,11 @@ Crie um token digital negociável que possa ser usado como moeda, representaçã
 
 A quantidade total de fichas em circulação pode ser definida para um valor fixo simples ou flutuar com base em qualquer conjunto de regras programado.
 
-https://ethereum.org/
-
 ## Protocolo
 
-### Blockchain 
+### Blockchain
 
-**Hashes** 
+**Hashes**
 
 Normalmente, quando um hash é calculado dentro do blockchain, é calculado duas vezes. Na maioria das vezes , os hashes SHA-256 são usados, no entanto, o RIPEMD-160 também é usado quando um hash menor é desejável (por exemplo, ao criar um endereço de blockchain).
 
@@ -72,16 +70,13 @@ Soma de verificação = 1º 4 bytes de SHA-256 (SHA-256 (Key hash))
 blockchain Address = Base58Encode (Key hash concatenado com Checksum)
 A codificação Base58 usada é caseira e tem algumas diferenças. Especialmente, zeros à esquerda são mantidos como zeros únicos quando a conversão acontece.
 
-https://en.blockchain.it/wiki/Protocol_documentation
-
-https://web3js.readthedocs.io/en/1.0/web3-eth-contract.html
-
-
-## Tutorial 
+## Tutorial
 
 **Criando um Ethereum Smart Contract**
 
-Neste tutorial criaremos um contrato inteligente Ethereum usando a biblioteca TestRPC para gerar dados de teste. Para instalar basta usar o comando abaixo.
+Neste tutorial criaremos um contrato inteligente Ethereum. Por exemplo iremos fazer um contrato de reserva em um hotel usando o nome da pessoa, o telofeno e o quarto que a pessoa reservou.
+
+Por motivos didáticos, iremos usar um programa chamado TestRPC para gerar dados de teste. O testrpc irá simular blockchains localmente para podermos usar. Para instalar basta usar o comando abaixo.
 
 ```bash
 > npm install -g ethereumjs-testrpc
@@ -93,44 +88,71 @@ E para executalo basta usar o comando abaixo.
 > testrpc
 ```
 
-Após isso será necessário instalar o Web3.js para gerenciar o protocolo. Está é a biblioteca padrão do Ethereum. Para instalar segue abaixo o comando. https://github.com/ethereum/web3.js/
+Se tiver algum problema com permissão, usar comando abaixo.
+
+```shell
+> testrpc -u 0 -u 1
+```
+
+Após isso será necessário instalar o Web3.js para gerenciar o protocolo. Está é a biblioteca padrão do Ethereum.
+
+Mas o que é o Web3.js ?
+
+É uma API Javascript compatível com Ethereum que implementa especificações RPC genéricas no formato JSON. Para a aplicação para trabalhar em ethereum pode usar o objeto Web3 fornecido pela biblioteca web3.js . A biblioteca interna se comunica com um nó local por meio de chamadas RPC. Web3.js funciona com qualquer nó Ethereum que expõe uma camada RPC. O Web3 contém o objeto eth  (web3.eth) para interações específicas do blockchain Ethereum e o objeto shh (web3.shh) para a interação do Whisper.
+
+A biblioteca web3.js é uma coleção de módulos e cada um contém uma funcionalidade para o ecossistema Ethereum.
+
+* web3-eth:  Blockchain  Ethereum  e Contratos Inteligentes.
+* web3-shh:  Protocolo Whisp, protocolo de comunicação entre P2P e broadcast dapps.
+* web3-bzz: Protocolo Swarm  , protocolo para armazenamento descentralizado
+* web3-utils:  contém funções de ajuda úteis para desenvolvedores do Dapp.
+
+Para instalar segue abaixo o comando.
 
 ```shell
 > npm install ethereum/web3.js --save
 ```
 
-Com tudo devidamente instalado, usaremos uma IDE  web suportado pela propria Ethereum para facilitar o trabalho. Segue o link https://remix.ethereum.org/ - automatic!
+Com tudo devidamente instalado, usaremos uma IDE  web suportado pela propria Ethereum por motivos didáticos. Segue o link https://remix.ethereum.org/
 
+O Remix é uma IDE que suporta o Solidity.
 
-Crie um novo arquivo no Remix com o nome de Coursetro.sol e insira o codigo abaixo.
+Mas o que é Solidity ?
+
+Solidity é uma linguagem de programação orientada a contratos para escrever contratos inteligentes. É usado para implementar contratos inteligentes em várias plataformas blockchain .
+
+Crie um novo arquivo no Remix com o nome de reserva.sol e insira o codigo abaixo.
 
 ```javascript
 pragma solidity ^0.4.18;
 
-contract Coursetro {
-    
-   string fName;
-   uint age;
-   
-   function setInstructor(string _fName, uint _age) public {
-       fName = _fName;
-       age = _age;
+contract Reserva {
+
+   string nome;
+   string telefone;
+   int quarto
+
+   function setInstructor(string _nome, string _telefone,int _quarto) public {
+       nome = _nome;
+       telefone = _telefone;
+       quarto = _quarto;
    }
-   
-   function getInstructor() public constant returns (string, uint) {
-       return (fName, age);
+
+   function getInstructor() public constant returns (string, string,int) {
+       return (nome,telefone,quarto);
    }
-    
 }
 ```
 
-Isse código comtem os parametros que seram armazenados no blockchain, neste caso específico armazenaremos apenas nome e idade da pessoa. 
+Isse código comtem os parametros que seram armazenados no blockchain, neste caso específico armazenaremos o nome, telefone e a quarto que será reservado. Com isso podemos garantir que uma pessoa reservou o quarto. Note que é apenas um exemplo, portanto não garantimos que duas pessoas reservem o mesmo quarto.
 
 Feito isso, click em *Start to compile* e depois na aba *Run* em *Environment* selecione a opção *Web3 Provider*, insira a url padrão **http://localhost:8545** e dê *Ok*
 
+O *Web3 Provider* irá possibilitar a comunicação via Web3.js e a url usamos o localhost porque o testerpc está emulando a blockchain localmente. Se quiser conectar a uma blockchain remotamente
+
 ![figure1](/figure1.png)
 
-## Front-end 
+## Front-end
 
 Agora iremos para o front-end do projeto. Crie um arquivo com o nome index.html na mesma pasta em que foi instalado o web3.js. Será uma interface UI bem simples apenas por motivos didáticos. Segue abaixo o código.
 
@@ -147,23 +169,25 @@ Agora iremos para o front-end do projeto. Crie um arquivo com o nome index.html 
 </head>
 <body>
     <div class="container">
-        <h1>Coursetro Instructor</h1>
+        <h1>Reserva</h1>
         <h2 id="instructor"></h2>
-        <label for="name" class="col-lg-2 control-label">Instructor Name</label>
-        <input id="name" type="text">
-        <label for="name" class="col-lg-2 control-label">Instructor Age</label>
-        <input id="age" type="text">
-        <button id="button">Update Instructor</button>
+        <label for="nome" class="col-lg-2 control-label">Nome</label>
+        <input id="nome" type="text">
+        <label for="telefone" class="col-lg-2 control-label">Telefone</label>
+        <input id="telefone" type="text">
+        <label for="quarto" class="col-lg-2 control-label">Quarto</label>
+        <input id="quarto" type="text">
+        <button id="button">Atulaziar</button>
     </div>
     <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
     <script>
-       // Our future code here..
+       // Iremos preencher aqui depois ...
     </script>
 </body>
 </html>
 ```
 
-Segue o código do CSS para customizar o style do html. 
+Segue o código do CSS para customizar o style do html.
 
 ```css
 body {
@@ -197,7 +221,9 @@ button {
 }
 ```
 
-Agora iremos conectar o html ao web3 para a comunicação com a blockchain. Insira o código abaixo. 
+Agora iremos conectar o html ao web3 para a comunicação com a blockchain. Usando a url do localhost, mas para uma aplicação real substitua pelo ip do provedor que irá utilizar. Insira o código abaixo.
+
+Ethereum suporta navegadores como Mist ou MetaMask terão um ethereumProvider web3.currentProvider disponível. Para web3.js, verifique Web3.givenProvider. Se esta propriedade é null você deve se conectar a um nó remoto/local.
 
 
 ```javascript
@@ -205,8 +231,10 @@ Agora iremos conectar o html ao web3 para a comunicação com a blockchain. Insi
 	// Verificamos a instancia do web3
     if (typeof web3 !== 'undefined') {
         web3 = new Web3(web3.currentProvider);
+        //var web3 = new Web3(Web3.givenProvider || "ws://localhost:8546");
     } else {
         // Definimos o provedor que queremos, no caso o Web3.providers, cuja porta padrão é 8545
+        // Usamos o localhost, mas se quiser se conectar remoto use o ip do destino
         web3 = new Web3(new Web3.providers.HttpProvider("http://localhost:8545"));
     }
 	// Aqui pegamos a primeira conta fornecida pelo testrpc
@@ -220,12 +248,17 @@ Agora voltando para o Remix, na aba *Compile* clique em *Details* e desça até 
 solc filename.sol --abi
 ```
 
+Mas o que é ABI ?
+
+ABI significa interface binária de aplicativo. Em geral, um ABI é a interface entre dois módulos de programa, um dos quais é frequentemente no nível de código de máquina. A interface é o método de fato para codificar / decodificar dados dentro / fora do código da máquina. No Ethereum, é basicamente como você pode codificar chamadas de contratos de Solidity para o EVM e, de trás para frente, como ler os dados de transações.
+
+
 ![figure2](/figure2.png)
 
 ```javascript
  <script>
-    // Todo o código anterior continua , mais 
-	var CoursetroContract = web3.eth.contract("COLE O ABI AQUI");
+    // Todo o código anterior continua , mais o que segue abaixo
+	var reserva = web3.eth.contract("COLE O ABI AQUI");
  </script>
 ```
 Agora vamos inserir o endereço do blockchain. Em *Deploy contracts* clique no ícone de copy e insera no código como demonstrádo no código abaixo.
@@ -235,11 +268,11 @@ Agora vamos inserir o endereço do blockchain. Em *Deploy contracts* clique no �
 
 ```javascript
  <script>
-    // Todo o código anterior continua , mais 
-	var CoursetroContract = web3.eth.contract("COLE O ABI AQUI");
+    // Todo o código anterior continua , mais o que segue abaixo
+	var reservaContrato = web3.eth.contract("COLE O ABI AQUI");
 
-	var Coursetro = CoursetroContract.at('COLE O ENDEREÇO AQUI');
-    console.log(Coursetro);
+	var reserva = reservaContrato.at('COLE O ENDEREÇO AQUI');
+    console.log(reserva);
 
  </script>
 ```
@@ -248,39 +281,60 @@ Agora  vamos inserir um jquery para melhorar a usabilidade, dando uma função p
 
 ```javascript
  <script>
-    // Todo o código anterior continua , mais 
-	Coursetro.getInstructor(function(error, result){
-       if(!error){
-       		$("#instructor").html(result[0]+' ('+result[1]+' years old)');
-       		console.log(result);
-       }else console.error(error);
-    });
+    // Todo o código anterior continua , mais o que segue abaixo
+    reserva.getInstructor(function(error, result){
+            if(!error)
+                {
+                    $("#instructor").html(result[0]+' do telefone '+result[1]+" para o quarto "+result[2]);
+                    console.log(result);
+                }
+            else
+                console.error(error);
+        });
 
-    $("#button").click(function() {
-      	Coursetro.setInstructor($("#name").val(), $("#age").val());
-    });
+        $("#button").click(function() {
+            reserva.setInstructor($("#nome").val(), $("#telefone").val(),$("#quarto").val());
+        });
 
  </script>
 ```
 
-Por fim podemos abrir o arquivo index.html no navegador de escolha e inserir os dados de sua escolha. Ao atulaziar a pagina será mostrado a informação inserida anteriormente no h1. 
+Por fim podemos abrir o arquivo index.html no navegador de escolha e inserir os dados de sua escolha. Ao atulaziar a pagina será mostrado a informação inserida anteriormente.
 
-![figure4](/figure4.png)
+![index](/index.png)
 
 Se olharmos no log do terminal que estava rodando o testrpc podemos ver que a transação foi realizada.
 
 
-![figure5](/figure5.png)
+![terminal](/terminal.png)
 
 
-**Referencias:** 
-https://ethereum.stackexchange.com/questions/3149/how-do-you-get-a-json-file-abi-from-a-known-contract-address
-http://hypernephelist.com/2016/06/21/a-simple-smart-contract-ui-web3.html
-https://github.com/ethereum/web3.js/tree/develop/example
-https://coursetro.com/posts/code/99/Interacting-with-a-Smart-Contract-through-Web3.js-(Tutorial)
-https://github.com/ethereum/web3.js/
-https://remix.ethereum.org/
+**Referencias:**
+
+https://en.blockchain.it/wiki/Protocol_documentation
+
+https://web3js.readthedocs.io/en/1.0/web3-eth-contract.html
+
 https://ethereum.org/
 
+https://ethereum.stackexchange.com/questions/3149/how-do-you-get-a-json-file-abi-from-a-known-contract-address
 
+http://hypernephelist.com/2016/06/21/a-simple-smart-contract-ui-web3.html
 
+https://github.com/ethereum/web3.js/tree/develop/example
+
+https://coursetro.com/posts/code/99/Interacting-with-a-Smart-Contract-through-Web3.js-(Tutorial)
+
+https://github.com/ethereum/web3.js/
+
+https://remix.ethereum.org/
+
+https://tecnops.es/3-ethereum-primeros-pasos-con-solidity-y-ethereum-javascript-api/
+
+https://en.wikipedia.org/wiki/Solidity
+
+https://ethereum.stackexchange.com/questions/234/what-is-an-abi-and-why-is-it-needed-to-interact-with-contracts
+
+https://ethereum.stackexchange.com/questions/10868/contract-call-web3-error-could-not-unlock-signer-account
+
+https://davekiss.com/ethereum-web3-node-tutorial/
